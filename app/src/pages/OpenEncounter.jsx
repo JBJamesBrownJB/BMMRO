@@ -78,29 +78,6 @@ const OpenEncounter = ({ encounterId }) => {
     // eslint-disable-next-line
   }, [datastore]);
 
-  const renderButtons = () => {
-    if (encounter.exported) {
-      return (
-        <div css={utilities.backLinkContainer.bottom}>
-          <BackLink text="Return to encounter list" to={ROUTES.encounters} />
-        </div>
-      );
-    }
-
-    return (
-      <div css={styles.footerContainer}>
-        <Button disabled={isNewEncounter()} onClick={onEndEncounterClick}>
-          End encounter
-        </Button>
-        {isNewEncounter() && (
-          <div css={styles.disabledButtonMessage}>
-            Please complete all required encounter fields to end the encounter
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <Layout hasDefaultPadding={false} hasBackLink={encounter.exported}>
       {encounter.exported && (
@@ -122,7 +99,9 @@ const OpenEncounter = ({ encounterId }) => {
               encounterExported={encounter.exported}
             />
           </div>
-          {renderButtons()}
+          <div css={utilities.backLinkContainer.bottom}>
+            <BackLink text="Return to encounter list" to={ROUTES.encounters} />
+          </div>
         </div>
       ) : (
         <Loader />

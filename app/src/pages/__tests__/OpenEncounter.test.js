@@ -48,26 +48,7 @@ describe("OpenEncounter", () => {
     });
   });
 
-  it("does not allow ending the encounter if required fields are missing", async () => {
-    await firestoreEmulator.collection("encounter").doc("a6789").set({
-      species: "Bottlenose dolphin",
-      area: "UK",
-    });
-
-    const { getByRole } = renderWithMockContexts(
-      <OpenEncounter encounterId={"a6789"} />,
-      { datastore }
-    );
-
-    await waitFor(() => {
-      const endButton = getByRole("button", {
-        name: "End encounter",
-      });
-      expect(endButton).toHaveAttribute("disabled");
-    });
-  });
-
-  it("shows a button to end the encounter if the encounter contains all required field and it was not yet exported", async () => {
+  it("has one link if the encounter was not previously exported", async () => {
     await firestoreEmulator.collection("encounter").doc("123").set({
       species: "some species",
       area: "some area",
@@ -75,16 +56,19 @@ describe("OpenEncounter", () => {
       exported: false,
     });
 
-    const { getByRole } = renderWithMockContexts(
+    const { getAllByRole } = renderWithMockContexts(
       <OpenEncounter encounterId={"123"} />,
       { datastore }
     );
 
     await waitFor(() => {
-      const endButton = getByRole("button", {
-        name: "End encounter",
+      const expectedLink = "/encounters";
+      const backLinks = getAllByRole("link", {
+        name: "Return to encounter list",
       });
-      expect(endButton).not.toHaveAttribute("disabled");
+
+      expect(backLinks).toHaveLength(1);
+      expect(backLinks[0].href).toContain(expectedLink);
     });
   });
 
